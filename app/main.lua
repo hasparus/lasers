@@ -20,12 +20,15 @@ game = {
     bax = Bayoo:new()
 
     pauseOverlay = PauseOverlay:new()
-
+    robot = Robot:new(window.width / 2, window.height / 2, 30, 30, 1)
+    robot2 = Robot:new(window.width / 2, window.height / 2, 30, 30, 2)
     entities:push(Entity:new(),
                   Entity:new(),
                   bax,
                   pauseOverlay,
-                  PadDebug:new()
+                  PadDebug:new(),
+                  robot,
+                  robot2
                   )
   end,
   update = function(deltaTime)
@@ -52,6 +55,7 @@ require 'entities.entity'
 require 'entities.pause_overlay'
 require 'entities.pad_debug_ui'
 require 'entities.bayoo'
+require 'entities.robot'
 
 require 'utils.utils'
 

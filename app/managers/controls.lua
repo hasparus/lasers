@@ -53,6 +53,8 @@ function GamepadController:getID()
 end
 
 function GamepadController:getLeftStick()
+  if not self.joystick then print 'no joystick on pad'; return end
+
   x, y = self.joystick:getGamepadAxis("leftx"), self.joystick:getGamepadAxis("lefty")
   if math.abs(x) + math.abs(y) < SUM_TRESHOLD then x, y = 0, 0 end
   return x, y

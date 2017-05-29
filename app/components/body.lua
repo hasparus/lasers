@@ -24,7 +24,7 @@ end
 
 function Body:move(x, y)
   if y == nil then
-    self.pos = self.pos + x 
+    self.pos = self.pos + x
   else
     self.pos.x = self.pos.x + x
     self.pos.y = self.pos.y + y
