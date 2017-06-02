@@ -26,7 +26,15 @@ local sqrt, cos, sin, atan2 = math.sqrt, math.cos, math.sin, math.atan2
 local vector = {}
 vector.__index = vector
 
+local function isvector(v)
+	return type(v) == 'table' and type(v.x) == 'number' and type(v.y) == 'number'
+end
+
 local function new(x,y)
+	if x and not y then
+		assert(isvector(x), 'Copied table must be vectorlike.')
+		x, y = x.x, x.y
+	end
 	return setmetatable({x = x or 0, y = y or 0}, vector)
 end
 local zero = new(0,0)
@@ -35,9 +43,6 @@ local function fromPolar(angle, radius)
 	return new(cos(angle) * radius, sin(angle) * radius)
 end
 
-local function isvector(v)
-	return type(v) == 'table' and type(v.x) == 'number' and type(v.y) == 'number'
-end
 
 function vector:clone()
 	return new(self.x, self.y)

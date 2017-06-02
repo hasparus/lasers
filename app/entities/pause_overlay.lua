@@ -1,9 +1,9 @@
 require 'entities.entity'
 
-PauseOverlay = class('PauseOverlay', Entity)
+PauseOverlay = class('PauseOverlay', Entity) -- refactor to UI.Component
 
 colors = colors or {}
-colors.pauseOverlayColor = lue:newColor():setColor({255, 255, 255, 180})
+colors.pauseOverlayColor = lue:newColor():setColor({0, 0, 0, 0})
 
 function PauseOverlay:initialize()
 
@@ -34,6 +34,17 @@ function PauseOverlay:draw()
 end
 
 function PauseOverlay:notifyOnFocusChange(focus)
-
+  print("focus: " .. (focus and 'true' or 'false'))
+  if focus then
+    colors.pauseOverlayColor:setColor({
+      color = {0, 0, 0, 0},
+      speed = 100
+    })
+  else
+    colors.pauseOverlayColor:setColor({
+      color = {220, 220, 221, 150},
+      speed = 10
+    })
+  end
 end
 

@@ -3,7 +3,9 @@ class = require 'libs.middleclass.middleclass'
 lume = require 'libs.lume.lume'
 shack = require 'libs.shack.shack'
 lue = require 'libs.lue'
+hc = require 'libs.HC'
 
+require 'colors'
 graphzy = require 'utils.graphzy'
 
 colors = colors or {}
@@ -20,16 +22,21 @@ game = {
     bax = Bayoo:new()
 
     pauseOverlay = PauseOverlay:new()
-    robot = Robot:new(window.width / 2, window.height / 2, 30, 30, 1)
-    robot2 = Robot:new(window.width / 2, window.height / 2, 30, 30, 2)
-    entities:push(Entity:new(),
+    robots = {
+      Robot:new(window.width / 2 + 30, window.height / 2 + 30, 30, 30, 1),
+      Robot:new(window.width / 2 - 30, window.height / 2 - 30, 30, 30, 2) }
+      
+    entities:push(UI:new(UI.Background:new()),
                   Entity:new(),
-                  bax,
-                  pauseOverlay,
-                  PadDebug:new(),
-                  robot,
-                  robot2
+                  Entity:new(),
+                  bax
                   )
+                  
+    entities:push(unpack(robots))
+
+    entities:push(pauseOverlay,
+                  PadDebug:new())
+
   end,
   update = function(deltaTime)
 
@@ -56,6 +63,7 @@ require 'entities.pause_overlay'
 require 'entities.pad_debug_ui'
 require 'entities.bayoo'
 require 'entities.robot'
+require 'entities.ui'
 
 require 'utils.utils'
 
@@ -92,17 +100,6 @@ end
 
 function love.focus(focus)
   game.paused = not focus
-  if focus then
-    colors.pauseOverlayColor:setColor({
-      color = {0, 0, 0, 0},
-      speed = 100
-    })
-  else
-    colors.pauseOverlayColor:setColor({
-      color = {220, 220, 221, 150},
-      speed = 10
-    })
-  end
-  
-  pauseOverlay.notifyOnFocusChange(focus)
+  print(focus)
+  pauseOverlay:notifyOnFocusChange(focus)
 end

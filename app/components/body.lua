@@ -12,12 +12,15 @@ function Body:initialize(posX, posY, sizeX, sizeY)
   self.size = Vector2.new(sizeX, sizeY)
 end
 
+function Body:unpack()
+  return self.pos.x, self.pos.y, self.size.x, self.size.y
+end
+
 function Body:moveTo(x, y)
   if y == nil then
     self.pos = x
   else
-    self.pos.x = x
-    self.pos.y = y
+    self.pos.x, self.pos.y = x, y
   end
   return self
 end
