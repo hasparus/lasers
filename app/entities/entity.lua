@@ -30,5 +30,5 @@ function Entity:destroy()
   for k, v in ipairs(self.components) do
     v.entity = nil
   end
-  entities:remove(self.ID)
+  entities[self.ID] = nil
 end

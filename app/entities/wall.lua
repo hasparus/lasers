@@ -49,21 +49,24 @@ function Wall:onWhichSide(point)
   local middles = {
     left = (self.body.pos + Vector2.new(self.body.pos.x, self.body.pos.y + self.body.size.y)) / 2,
     right = (Vector2.new(self.body.pos.x + self.body.size.x, self.body.pos.y) + self.body.size + self.body.pos) / 2,
-    top = (self.body.pos + Vector2.new(self.body.pos.x + self.body.size.x, self.body.pos)) / 2,
-    bottom = (self.body.pos + self.body.size + Vector.new(self.body.pos.x + self.body.size.x, self.body.pos.y)) / 2
+    top = (self.body.pos + Vector2.new(self.body.pos.x + self.body.size.x, self.body.pos.y)) / 2,
+    bottom = (self.body.pos + self.body.size + Vector2.new(self.body.pos.x, self.body.pos.y + self.body.size.y)) / 2
   }
   local closest = { side = 'none', distance = 9999999 }
   for k, v in pairs(middles) do
-    local dst = point:dist(v)
+    local dist = point:dist(v)
+
+    print(k, v, dist)
+
     if dist < closest.distance then
-      closest.side, closest.distance = k, v
+      closest.side, closest.distance = k, dist
     end
   end
   return closest
 end
 
 function Wall:direction()
-  local ax, ay = math.abs(self.size.x), math.abs(self.size.y)
+  local ax, ay = math.abs(self.body.size.x), math.abs(self.body.size.y)
   return ax > ay and 'Horizontal' or 'Vertical'
 end
 

@@ -17,7 +17,7 @@ end
 
 AutoIndexedList = {}
 AutoIndexedList.__index = function (_, key)
-  return AutoIndexedList[key] or List[key]
+  return AutoIndexedList[key] or table[key]
 end
 
 function AutoIndexedList.new()
@@ -29,8 +29,8 @@ end
 function AutoIndexedList:push(...)
   for _, v in pairs({...}) do
     self.count = self.count + 1
-    self[self.count] = v
     v.ID = self.count
+    self[self.count] = v
   end
 end
 

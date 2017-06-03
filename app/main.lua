@@ -18,7 +18,7 @@ window = {
 -- Game
 game = {
   load = function()
-    entities = List.new()
+    entities = AutoIndexedList.new()
     bax = Bayoo:new()
 
     pauseOverlay = PauseOverlay:new()
@@ -55,13 +55,15 @@ game = {
   end,
   update = function(deltaTime)
 
-    for _, entity in ipairs(entities) do
+    for i = 1, entities.count do
+      local entity = entities[i]
       if entity then entity:update(deltaTime) end
     end
 
   end,
   draw = function()
-    for _, entity in ipairs(entities) do
+    for i = 1, entities.count do
+      local entity = entities[i]
       if entity then entity:draw() end
     end
   end,
