@@ -5,6 +5,7 @@ require 'entities.entity'
 
 require 'components.component'
 require 'components.body'
+require 'components.racket'
 require 'components.dynamic_body'
 
 ROBOT_SPEED = 500
@@ -15,39 +16,40 @@ colors = colors or {}
 colors.robotish1 = COLORS.feel.pink
 colors.robotish2 = COLORS.feel.green
 
-Robot = class('Entity', Entity)
+Robot = class('Robot', Entity)
 
 function Robot:initialize(x, y, sx, sy, playerID)
   Entity.initialize(self)
 
   self.playerID = playerID
   self:attach(Body:new(x, y, sx, sy))
+  self:attach(Racket:new(x, y))
   
   self.collider = hc.circle(x, y, sx)
   self.collider.entity = self
 
   -- todo add racket, render racket, rotate racket
-
-  print(self)
 end
 
 function Robot:update(deltaTime)
-  Entity.update(self)
+  Entity.update(self, deltaTime)
 
-  self:doCollide(deltaTime)
-  self:doMove(deltaTime)
+  self:handleCollisions(deltaTime)
+  self:moveInTime(deltaTime)
 end
 
-function Robot:doMove(deltaTime)
+function Robot:moveInTime(deltaTime)
   local move = Vector2(game.controls.pad[self.playerID]:getLeftStick())
   move = move * deltaTime * ROBOT_SPEED
   self:move(move)
 end
 
-function Robot:doCollide(deltaTime)
+function Robot:handleCollisions(deltaTime)
   for other, separating_vector in pairs(hc.collisions(self.collider)) do
     separating_vector = Vector2.new(separating_vector)
-    if other.entity and other.entity.move then
+    if other.entity.class.name == 'Racket' then
+      -- do nothing 
+    elseif other.entity and other.entity.move then
       other.entity:move(-separating_vector / 2) -- *blinker* reversing vector to pass throught walls? 
       self:move(separating_vector / 2)
     else
@@ -56,14 +58,13 @@ function Robot:doCollide(deltaTime)
   end
 end
 
-function Robot:move(move)
-  self.body:move(move)
-  self.collider:move(move:unpack())
+function Robot:move(moveVector)
+  propagate(self.components, 'move', moveVector)
+  self.collider:move(moveVector:unpack())
 end
 
 function Robot:draw()
+  love.graphics.withColor(colors['robotish' .. self.playerID],
+    love.graphics.ellipse, 'fill', self.body:unpack())
   Entity.draw(self)
-
-  love.graphics.setColor(colors['robotish' .. self.playerID]:getColor())
-  love.graphics.ellipse('fill', self.body:unpack())
 end

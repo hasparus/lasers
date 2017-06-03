@@ -38,6 +38,10 @@ function love.gamepadpressed(joystick, button)
     { button = button, pad = game.controls.pad[id] }
 end
 
+function GamepadController:connected()
+  return not not self.joystick
+end
+
 function GamepadController:connect(controllerNumber)
   local jstick = love.joystick.getJoysticks()[controllerNumber]
   self.joystick = (jstick and jstick:isGamepad() and jstick) or nil
@@ -61,15 +65,19 @@ function GamepadController:getLeftStick()
 end
 
 function GamepadController:getRightStick()
+  if not self.joystick then return end
+
   x, y = self.joystick:getGamepadAxis("rightx"), self.joystick:getGamepadAxis("righty")
   if math.abs(x) + math.abs(y) < SUM_TRESHOLD then x, y = 0, 0 end
   return x, y
 end
 
 function GamepadController:getLeftTrigger()
+  if not self.joystick then return 0 end
   return self.joystick:getGamepadAxis("triggerleft")
 end
 
 function GamepadController:getRightTrigger()
+if not self.joystick then return 0 end
   return self.joystick:getGamepadAxis("triggerright")
 end

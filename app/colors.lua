@@ -5,6 +5,7 @@ COLORS.new = function(r, g, b, a)
 end
 COLORS.feel = {
   darkGray = COLORS.new(15, 17, 20),
+  gray     = COLORS.new(51, 51, 51),
   darkBlue = COLORS.new(0, 49, 77),
   pink     = COLORS.new(236, 0, 140),
   green    = COLORS.new(102, 255, 188),

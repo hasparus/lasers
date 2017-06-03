@@ -38,4 +38,13 @@ function PadDebug:draw()
     love.graphics.print("Right stick: [" .. ax3 .. '], [' .. ax4 .. ']', window.width / 2 - 120, 50)
     love.graphics.print("Triggers: [" .. ax5 .. '], [' .. ax6 .. ']', window.width / 2 - 120, 70)
   end
+
+  local p1 = game.controls.pad[1]
+  local p2 = game.controls.pad[2]
+  if p1.joystick then
+    love.graphics.print("Pink lasers limit: " .. robots[1].racket.lasersLimit, 20, 400)
+  end
+  if p2.joystick then
+    love.graphics.print("Pink lasers limit: " .. robots[2].racket.lasersLimit, 20, 400)
+  end
 end

@@ -1,6 +1,7 @@
 require 'entities.entity'
 
 PauseOverlay = class('PauseOverlay', Entity) -- refactor to UI.Component
+PauseOverlay.static.pausedBlendMode = 'screen'
 
 colors = colors or {}
 colors.pauseOverlayColor = lue:newColor():setColor({0, 0, 0, 0})
@@ -22,7 +23,7 @@ function PauseOverlay:draw()
   love.graphics.setColor(colors.pauseOverlayColor:getColor())
   
   if game.paused then
-    love.graphics.setBlendMode('screen')
+    love.graphics.setBlendMode(PauseOverlay.static.pausedBlendMode)
     love.graphics.rectangle('fill', 0, 0, window.width, window.height)
   end
 

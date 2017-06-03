@@ -18,7 +18,7 @@ window = {
 -- Game
 game = {
   load = function()
-    entities = List:new()
+    entities = List.new()
     bax = Bayoo:new()
 
     pauseOverlay = PauseOverlay:new()
@@ -27,10 +27,25 @@ game = {
       Robot:new(window.width / 2 - 30, window.height / 2 - 30, 30, 30, 2) }
       
     entities:push(UI:new(UI.Background:new()),
-                  Entity:new(),
-                  Entity:new(),
                   bax
                   )
+
+    walls = nil
+    local instantiateWalls = function() --instantiate walls 
+      local p = 12
+      local q = 14
+      walls = WallComposite:new(0, 0, 0, 0,
+        function ()
+          local w, h = window.width, window.height
+          return Wall:new(0, 0, w / p, h),
+            Wall:new((p - 1) * w / p, 0, w / p, h),
+            Wall:new(0, 0, w, h / q),
+            Wall:new(0, (q - 1) * h / q, w, h / q)
+          end
+      )
+      entities:push(walls)
+    end
+    instantiateWalls()
                   
     entities:push(unpack(robots))
 
@@ -40,18 +55,15 @@ game = {
   end,
   update = function(deltaTime)
 
-    lume.each(entities, function (entity)
-      entity:update(deltaTime)
-    end)
+    for _, entity in ipairs(entities) do
+      if entity then entity:update(deltaTime) end
+    end
 
-    bax.body:move(
-      (love.math.random() - 0.5) * 200 * deltaTime,
-      (love.math.random() - 0.5) * 200 * deltaTime)
   end,
   draw = function()
-    lume.each(entities, function (entity)
-          entity:draw()
-      end)
+    for _, entity in ipairs(entities) do
+      if entity then entity:draw() end
+    end
   end,
   paused = false
 }
@@ -63,6 +75,7 @@ require 'entities.pause_overlay'
 require 'entities.pad_debug_ui'
 require 'entities.bayoo'
 require 'entities.robot'
+require 'entities.wall'
 require 'entities.ui'
 
 require 'utils.utils'
@@ -102,4 +115,9 @@ function love.focus(focus)
   game.paused = not focus
   print(focus)
   pauseOverlay:notifyOnFocusChange(focus)
+end
+
+function love.resize(w, h)
+  window.width, window.height = w, h
+  walls:refresh()
 end

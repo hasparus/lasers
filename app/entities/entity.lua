@@ -25,3 +25,10 @@ function Entity:attach(component)
     component.class.name:match('%u%U+$')
   self[componentBaseName:lower()] = component
 end
+
+function Entity:destroy()
+  for k, v in ipairs(self.components) do
+    v.entity = nil
+  end
+  entities:remove(self.ID)
+end

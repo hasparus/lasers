@@ -23,8 +23,11 @@ function Bayoo:initialize()
   self.sign = 1
 end
 
-function Bayoo:update()
+function Bayoo:update(deltaTime)
   Entity.update(self)
+  self.body:move(
+    (love.math.random() - 0.5) * 200 * deltaTime,
+    (love.math.random() - 0.5) * 200 * deltaTime)
 end
 
 function Bayoo:draw()

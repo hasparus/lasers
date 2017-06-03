@@ -12,6 +12,10 @@ function Body:initialize(posX, posY, sizeX, sizeY)
   self.size = Vector2.new(sizeX, sizeY)
 end
 
+function Body:combined()
+  return self.pos + self.size
+end
+
 function Body:unpack()
   return self.pos.x, self.pos.y, self.size.x, self.size.y
 end

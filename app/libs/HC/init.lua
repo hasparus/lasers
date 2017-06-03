@@ -131,10 +131,10 @@ return setmetatable({
 	register  = function(...) return instance:register(...) end,
 	remove    = function(...) return instance:remove(...) end,
 
+	point     = function(...) return instance:point(...) end,
 	polygon   = function(...) return instance:polygon(...) end,
 	rectangle = function(...) return instance:rectangle(...) end,
 	circle    = function(...) return instance:circle(...) end,
-	point     = function(...) return instance:point(...) end,
 
 	neighbors  = function(...) return instance:neighbors(...) end,
 	collisions = function(...) return instance:collisions(...) end,

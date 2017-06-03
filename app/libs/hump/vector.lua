@@ -141,19 +141,19 @@ function vector.dist2(a, b)
 	return (dx * dx + dy * dy)
 end
 
-function vector:normalizeInplace()
+function vector:normalizeInPlace()
 	local l = self:len()
-	if l > 0 then
+	if l ~= 1 then
 		self.x, self.y = self.x / l, self.y / l
 	end
 	return self
 end
 
 function vector:normalized()
-	return self:clone():normalizeInplace()
+	return self:clone():normalizeInPlace()
 end
 
-function vector:rotateInplace(phi)
+function vector:rotateInPlace(phi)
 	local c, s = cos(phi), sin(phi)
 	self.x, self.y = c * self.x - s * self.y, s * self.x + c * self.y
 	return self
@@ -188,7 +188,7 @@ function vector:cross(v)
 end
 
 -- ref.: http://blog.signalsondisplay.com/?p=336
-function vector:trimInplace(maxLen)
+function vector:trimInPlace(maxLen)
 	local s = maxLen * maxLen / self:len2()
 	s = (s > 1 and 1) or math.sqrt(s)
 	self.x, self.y = self.x * s, self.y * s
@@ -203,7 +203,7 @@ function vector:angleTo(other)
 end
 
 function vector:trimmed(maxLen)
-	return self:clone():trimInplace(maxLen)
+	return self:clone():trimInPlace(maxLen)
 end
 
 
