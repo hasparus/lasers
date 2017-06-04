@@ -22,6 +22,8 @@ end
 function PadDebug:draw()
   Entity.draw(self)
 
+  love.graphics.setColor(255, 255, 0)
+
   local pad = game.controls.pad.lastAction.pad
   love.graphics.print(
     "Last gamepad button pressed: " .. 

@@ -44,7 +44,19 @@ function Wall:draw()
   Entity.draw(self)
 end
 
----
+function Wall:onWhichSide(point)
+  local epsilon = 1
+  local middles = {
+    left = (self.body.pos + Vector2.new(self.body.pos.x, self.body.pos.y + self.body.size.y)) / 2,
+    right = (Vector2.new(self.body.pos.x + self.body.size.x, self.body.pos.y) + self.body.size + self.body.pos) / 2,
+    top = (self.body.pos + Vector2.new(self.body.pos.x + self.body.size.x, self.body.pos)) / 2,
+    bottom
+  }
+end
+
+function Wall:direction()
+
+end
 
 WallComposite = class('WallComposite', Wall)
 
