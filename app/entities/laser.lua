@@ -66,7 +66,8 @@ function Laser:update(deltaTime)
       if otherClass == 'Robot' then
         print('destroyed robot!')
       elseif otherClass == 'Wall' then
-        --detect hitted
+        self.head.velocity = -self.head.velocity
+        
       end
     end
   end
