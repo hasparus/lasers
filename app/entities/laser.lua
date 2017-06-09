@@ -6,6 +6,43 @@ require 'components.dynamic_body'
 
 LASER_LIFESPAN_MODIFIER = 25
 LASER_LENGTH = 30
+LASER_HEAD_TAIL_DISTANCE = 100
+LASER_SHAKE = 15
+
+LaserTail = class('LaserTail', DynamicBody)
+
+function LaserTail:initialize(position, direction, power)
+  DynamicBody.initialize(self, position.x, position.y, 5, 5)
+  self.velocityLength = (direction * lume.clamp(power, 1, 5)):len()
+end
+
+function LaserTail:update(deltaTime)
+  DynamicBody.update(self, deltaTime)
+  local direction
+  local middlepoints = self.entity.middlepoints
+
+  if #middlepoints == 0 then
+    if self.entity.head.pos:dist(self.pos) > LASER_HEAD_TAIL_DISTANCE * lume.clamp(self.velocityLength / 3, 1, 2) then
+      direction = (self.entity.head.pos - self.pos):normalizeInPlace()
+      self.pos = self.pos + direction * self.velocityLength * deltaTime
+    end
+  else
+    local first = middlepoints[1]
+    direction = (first - self.pos):normalizeInPlace() 
+    self.pos = self.pos + direction * self.velocityLength * deltaTime
+    if middlepoints[1]:dist(self.pos) < 2 then
+      table.remove(middlepoints, 1)
+    end
+  end
+end
+
+function LaserTail:draw()
+  love.graphics.setColor(colors.racket:getColor())
+  love.graphics.translate(self.pos.x, self.pos.y)
+  love.graphics.rotate(self.angle)
+  love.graphics.ellipse('fill', 0, 0, self.size.x, self.size.y)
+  love.graphics.origin()
+end
 
 LaserHead = class('LaserHead', DynamicBody)
 
@@ -14,10 +51,45 @@ function LaserHead:initialize(position, direction, power)
   
   self.velocity = direction * lume.clamp(power, 1, 5)
   self.angularVelocity = 5
+
+  self.collider = hc.circle(self.pos.x, self.pos.y, 3)
+  self.collider.entity = self
 end
 
 function LaserHead:update(deltaTime)
   DynamicBody.update(self, deltaTime)
+
+  for other, separating_vector in pairs(hc.collisions(self.collider)) do
+    if other.entity then
+      separating_vector = Vector2.new(separating_vector)
+      --print(other.entity.class.name)
+      local otherClass = other.entity.class.name
+      if otherClass == 'Robot' then
+        print('destroyed robot!')
+      elseif otherClass == 'Wall' then
+        
+        shack:setShake(LASER_SHAKE)
+        game.sounds.laserbounce:play()
+        
+        self.pos = self.pos + separating_vector * 5
+        local dir = other.entity:direction()
+        if dir == 'Horizontal' then
+          self.velocity.y = -self.velocity.y
+        else
+          self.velocity.x = -self.velocity.x
+        end
+
+        --print(dir .. ' direction')
+        --print(other.entity:onWhichSide(self.pos).side .. 'side')
+
+        self.entity:newMiddlepoint(self.pos)
+        -- print(other.entity:direction() .. " direction")
+        -- print(other.entity:onWhichSide(self.head.pos).side .. "side")
+      end
+    end
+  end
+  
+  self.collider:moveTo(self.pos.x, self.pos.y)
 end
 
 function LaserHead:draw()
@@ -37,14 +109,11 @@ function Laser:initialize(shooter, direction, power)
   self.lifespan = LASER_LIFESPAN_MODIFIER * self.power / 2
 
   self:attach(LaserHead:new(position, direction, power))
+  self:attach(LaserTail:new(position, direction, power))
   --self.tail = position:clone()
-  self.middlepoints = {position:clone()}
+  self.middlepoints = {}
 
   self.shooter = shooter
-
-  --head collider
-  self.head.collider = hc.circle(self.head.pos.x, self.head.pos.y, 1)
-  self.head.collider.entity = self
 end
 
 function Laser:update(deltaTime)
@@ -57,52 +126,15 @@ function Laser:update(deltaTime)
     return
   end
   
-  local head = self.head
-  for other, separating_vector in pairs(hc.collisions(self.head.collider)) do
-    if other.entity then
-      separating_vector = Vector2.new(separating_vector)
-      print(other.entity.class.name)
-      local otherClass = other.entity.class.name
-      if otherClass == 'Robot' then
-        print('destroyed robot!')
-      elseif otherClass == 'Wall' then
-        head.pos = head.pos + separating_vector
-        local dir = other.entity:direction()
-        if dir == 'Horizontal' then
-          head.velocity.y = -head.velocity.y
-        else
-          head.velocity.x = -head.velocity.x
-        end
-
-        self.middlepoints[#self.middlepoints + 1] = head.pos:clone()
-        -- print(other.entity:direction() .. " direction")
-        -- print(other.entity:onWhichSide(self.head.pos).side .. "side")
-      end
-    end
-  end
-  
-  print(self.ID .. ' lifespan ' .. self.lifespan)
+  --print(self.ID .. ' lifespan ' .. self.lifespan)
 
   Entity.update(self, deltaTime)
 
-  head.collider:moveTo(head.pos.x, head.pos.y)
+end
 
-  local mp = self.middlepoints
-  local n = #mp
-  for i = 1, n - 1 do
-    if (mp[i + 1]:dist(mp[i]) > LASER_LENGTH + self.power * 10) then
-      mp[i] = mp[i] + 
-      (self.head.velocity:len() * (mp[i + 1] - mp[i]):normalizeInPlace())
-       * deltaTime
-    end
-  end
-  if (self.head.pos:dist(self.middlepoints[n]) > LASER_LENGTH + self.power * 10) then
-      self.middlepoints[n] = self.middlepoints[n] + self.head.velocity * deltaTime
-  end
-
-  -- so, this is multiline, head, {middlepoints / collision points}, tail
-  -- on head collision: spawn middlepoint
-  -- until tail collides draw from head to middlepoint and from middlepoint to tail 
+function Laser:newMiddlepoint(point)
+  print('NEW MIDDLEPOINT ' .. tostring(point))
+  self.middlepoints[#self.middlepoints + 1] = point:clone()
 end
 
 function Laser:destroy()
@@ -117,21 +149,22 @@ end
 function Laser:draw()
   Entity.draw(self)
 
+  self.tail:draw()
   self.head:draw()
 
-  local middlepoints = self.middlepoints
-  for i = 1, #middlepoints - 1 do
-    local node = middlepoints[i]
-    local nextNode = middlepoints[i + 1]
-    
-    local points = {}
-    for _, v in ipairs(middlepoints) do
-      points[#points + 1] = v.x
-      points[#points + 1] = v.y
-    end
-    
-    love.graphics.line(unpack(points))
-    local node = middlepoints[#middlepoints]
-    love.graphics.line(node.x, node.y, self.head.pos.x, self.head.pos.y)
+  local middlepoints = self.middlepoints    
+  local nodes = {self.tail.pos, unpack(middlepoints)}
+  nodes[#nodes + 1] = self.head.pos
+  local points = {}
+
+  --print(#nodes)
+  
+  for _, v in ipairs(nodes) do
+    points[#points + 1] = v.x
+    points[#points + 1] = v.y
   end
+  
+  love.graphics.line(unpack(points))
+    --local node = middlepoints[#middlepoints]
+    --love.graphics.line(node.x, node.y, self.head.pos.x, self.head.pos.y)
 end

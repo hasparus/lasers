@@ -145,7 +145,7 @@ function Racket:handleCollisions(deltaTime)
   for other, separating_vector in pairs(hc.collisions(self.collider)) do
     if other.entity then
       separating_vector = Vector2.new(separating_vector)
-      print(other.entity.class.name)
+      --print(other.entity.class.name)
       local otherClass = other.entity.class.name
       if otherClass == 'Robot' then
         -- do nothing

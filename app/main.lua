@@ -18,6 +18,9 @@ window = {
 -- Game
 game = {
   load = function()
+
+    shack:setDimensions(window.width, window.height)
+
     entities = AutoIndexedList.new()
     bax = Bayoo:new()
 
@@ -55,6 +58,8 @@ game = {
   end,
   update = function(deltaTime)
 
+    shack:update(deltaTime)
+
     for i = 1, entities.count do
       local entity = entities[i]
       if entity then entity:update(deltaTime) end
@@ -62,12 +67,18 @@ game = {
 
   end,
   draw = function()
+
+    shack:apply()
+
     for i = 1, entities.count do
       local entity = entities[i]
       if entity then entity:draw() end
     end
   end,
-  paused = false
+  paused = false,
+  sounds = {
+    laserbounce = love.audio.newSource('assets/laserbounce.wav', 'static')
+  }
 }
 
 require 'managers.controls'
@@ -110,6 +121,10 @@ end
 function love.keypressed(key)
   if key == 'escape' then
     love.event.quit()
+  end
+
+  if key == 'u' then
+    game.controls.pad[1].joystick = "DEEEBUUUG"
   end
 end
 

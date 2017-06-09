@@ -19,6 +19,7 @@ end
 
 game = game or {}
 game.controls = game.controls or {}
+game.controls.development = true
 
 local GamepadController = class('GamepadController')
 GamepadController.Axis = {}
@@ -57,6 +58,17 @@ function GamepadController:getID()
 end
 
 function GamepadController:getLeftStick()
+  if game.controls.development then
+    return 
+      love.keyboard.isDown('d') and 1 or
+      love.keyboard.isDown('a') and -1 or
+      0,
+      love.keyboard.isDown('s') and 1 or
+      love.keyboard.isDown('w') and -1 or
+      0
+  end
+
+
   if not self.joystick then return end
 
   x, y = self.joystick:getGamepadAxis("leftx"), self.joystick:getGamepadAxis("lefty")
@@ -65,6 +77,16 @@ function GamepadController:getLeftStick()
 end
 
 function GamepadController:getRightStick()
+  if game.controls.development then
+    return 
+      love.keyboard.isDown('right') and 1 or
+      love.keyboard.isDown('left') and -1 or
+      0,
+      love.keyboard.isDown('down') and 1 or
+      love.keyboard.isDown('up') and -1 or
+      0
+  end
+
   if not self.joystick then return end
 
   x, y = self.joystick:getGamepadAxis("rightx"), self.joystick:getGamepadAxis("righty")
@@ -73,11 +95,21 @@ function GamepadController:getRightStick()
 end
 
 function GamepadController:getLeftTrigger()
+  if game.controls.development then
+    return 
+      love.keyboard.isDown('lshift')
+  end
+
   if not self.joystick then return 0 end
   return self.joystick:getGamepadAxis("triggerleft")
 end
 
 function GamepadController:getRightTrigger()
-if not self.joystick then return 0 end
+  if game.controls.development then
+    return 
+      love.keyboard.isDown('rshift') and 1
+  end
+
+  if not self.joystick then return 0 end
   return self.joystick:getGamepadAxis("triggerright")
 end
