@@ -19,7 +19,7 @@ end
 
 game = game or {}
 game.controls = game.controls or {}
-game.controls.development = true
+game.controls.development = false
 
 local GamepadController = class('GamepadController')
 GamepadController.Axis = {}

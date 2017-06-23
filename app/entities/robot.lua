@@ -44,12 +44,22 @@ function Robot:moveInTime(deltaTime)
   self:move(move)
 end
 
+function Robot:getHitByLaser()
+  love.audio.play('assets/playerhit.wav', 'static')
+  self:destroy()
+end
+
 function Robot:handleCollisions(deltaTime)
   for other, separating_vector in pairs(hc.collisions(self.collider)) do
     separating_vector = Vector2.new(separating_vector)
     if other.entity.class.name == 'Racket' then
       -- do nothing 
     elseif other.entity and other.entity.move then
+      if other.entity.class.name == 'LaserHead' then
+        self:getHitByLaser()
+        -- gameState.end() -- timescale *= 0.5, po sekundzie pokaż wyniki itditp
+      end 
+
       other.entity:move(-separating_vector / 2) -- *blinker* reversing vector to pass throught walls? 
       self:move(separating_vector / 2)
     else

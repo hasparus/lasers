@@ -5,6 +5,7 @@ shack = require 'libs.shack.shack'
 lue = require 'libs.lue'
 hc = require 'libs.HC'
 
+require 'managers.sounds'
 require 'colors'
 graphzy = require 'utils.graphzy'
 
@@ -57,7 +58,7 @@ game = {
 
   end,
   update = function(deltaTime)
-
+    love.audio.update()
     shack:update(deltaTime)
 
     for i = 1, entities.count do
@@ -76,9 +77,6 @@ game = {
     end
   end,
   paused = false,
-  sounds = {
-    laserbounce = love.audio.newSource('assets/laserbounce.wav', 'static')
-  }
 }
 
 require 'managers.controls'
