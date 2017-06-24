@@ -34,17 +34,17 @@ function PauseOverlay:draw()
   love.graphics.setBlendMode(oldBlendMode)
 end
 
-function PauseOverlay:notifyOnFocusChange(focus)
-  print("focus: " .. (focus and 'true' or 'false'))
-  if focus then
-    colors.pauseOverlayColor:setColor({
-      color = {0, 0, 0, 0},
-      speed = 100
-    })
-  else
+function PauseOverlay:changeState(pause)
+  --print("focus: " .. (focus and 'true' or 'false'))
+  if pause then
     colors.pauseOverlayColor:setColor({
       color = {220, 220, 221, 150},
       speed = 10
+    })
+  else
+    colors.pauseOverlayColor:setColor({
+      color = {0, 0, 0, 0},
+      speed = 100
     })
   end
 end

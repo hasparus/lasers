@@ -9,6 +9,7 @@ require 'managers.sounds'
 require 'colors'
 graphzy = require 'utils.graphzy'
 korutin = require 'managers.korutin'
+pauser = require 'managers.pause'
 
 colors = colors or {}
 
@@ -32,10 +33,12 @@ game = {
 
     bax = Bayoo:new()
 
-    pauseOverlay = PauseOverlay:new()
+    local p = 12
+    local q = 14
+
     robots = {
-      Robot:new(window.width / 2 + 30, window.height / 2 + 30, 30, 30, 1),
-      Robot:new(window.width / 2 - 30, window.height / 2 - 30, 30, 30, 2) }
+      Robot:new(window.width / 2, 50 + window.height / p, 30, 30, 1),
+      Robot:new(window.width / 2, window.height - 50 - window.height / p, 30, 30, 2) }
       
     entities:push(UI:new(UI.Background:new()),
                   bax
@@ -46,8 +49,6 @@ game = {
     entities:push(Net:new(0, window.height / 2 - (netSize / 2), window.width, netSize))
     walls = nil
     local instantiateWalls = function() --instantiate walls 
-      local p = 12
-      local q = 14
       walls = WallComposite:new(0, 0, 0, 0,
         function ()
           local w, h = window.width, window.height
@@ -63,8 +64,8 @@ game = {
                   
     entities:push(unpack(robots))
 
-    entities:push(pauseOverlay,
-                  PadDebug:new())
+    pauser.init(entities)
+    entities:push(PadDebug:new())
 
     game.sounds.playMusic()
   end,
@@ -87,7 +88,6 @@ game = {
       if entity then entity:draw() end
     end
   end,
-  paused = false,
   rackets = {}
 }
 
@@ -145,9 +145,8 @@ function love.keypressed(key)
 end
 
 function love.focus(focus)
-  game.paused = not focus
+  pauser.pause(not focus)
   print(focus)
-  pauseOverlay:notifyOnFocusChange(focus)
 end
 
 function love.resize(w, h)

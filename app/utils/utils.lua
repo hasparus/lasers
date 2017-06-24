@@ -52,6 +52,20 @@ math.softEquals = function(a, b, epsilon)
   return math.abs(a - b) < epsilon
 end
 
+math.lineFromPoints = function(one, two)
+  local a = (one.y - two.y) / (one.x - two.x)
+  local b = one.y - one.x * a
+
+  return {a = a, b = b}
+end
+
+math.linesCrossPoint = function(l, k)
+  local x = (k.b - l.b) / (l.a - k.a)
+  local y = l.a * x + l.b
+
+  return {x = x, y = y}
+end
+
 math.segment = math.segment or {}
 math.segment.containsPoint = function(a, b, c)
 
@@ -62,9 +76,9 @@ math.segment.containsPoint = function(a, b, c)
   if (within(a.x, c.x, b.x)
       and within(a.y, c.y, b.y)) then
       
-    print(a, c, b)
-    print(colinear(a, c, b))
-    print((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y))
+    --print(a, c, b)
+    --print(colinear(a, c, b))
+    --print((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y))
 
     return math.softEquals((b.x - a.x) * (c.y - a.y), (c.x - a.x) * (b.y - a.y), 1000)
   end

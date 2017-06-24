@@ -11,5 +11,6 @@ COLORS.feel = {
   green     = COLORS.new(102, 255, 188),
   yellow    = COLORS.new(255, 252, 96),
   lightBlue = COLORS.new(121, 205, 255),
-  orange    = COLORS.new(255, 166, 82)
+  orange    = COLORS.new(255, 166, 82),
+  black     = COLORS.new(10, 13, 17)
 }

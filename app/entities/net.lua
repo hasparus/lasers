@@ -10,8 +10,8 @@ require 'components.dynamic_body'
 
 local Vector2 = require 'libs.hump.vector'
 
-colors.net = COLORS.feel.orange
-colors.netEdge = COLORS.feel.darkBlue
+colors.net = COLORS.feel.black
+colors.netEdge = COLORS.feel.lightBlue
 
 Net = class('Net', Wall)
 
@@ -26,5 +26,4 @@ end
 function Net:draw()
   self:drawEdges(colors.netEdge)
   self:drawInside(colors.net)
-  Wall.draw(self)
 end

@@ -57,6 +57,10 @@ do
     game.rackets[self.id] = self
   end
 
+  function Racket:canReflect()
+    return self.racketMode == Racket.static.mode.REFLECTOR
+  end
+
   function Racket:destroy()
     table.remove(game.rackets, self.id)
     self.body = nil

@@ -58,7 +58,7 @@ function Wall:onWhichSide(point)
   for k, v in pairs(middles) do
     local dist = point:dist(v)
 
-    print(k, v, dist)
+    --print(k, v, dist)
 
     if dist < closest.distance then
       closest.side, closest.distance = k, dist

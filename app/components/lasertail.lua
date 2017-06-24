@@ -32,8 +32,8 @@ function LaserTail:update(deltaTime)
 end
 
 function LaserTail:draw()
-  love.graphics.translate(self.pos.x, self.pos.y)
-  love.graphics.rotate(self.angle)
-  love.graphics.ellipse('fill', 0, 0, self.size.x, self.size.y)
-  love.graphics.origin()
+  --love.graphics.translate(self.pos.x, self.pos.y)
+  --love.graphics.rotate(self.angle)
+  --love.graphics.ellipse('fill', 0, 0, self.size.x, self.size.y)
+  --love.graphics.origin()
 end

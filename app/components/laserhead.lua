@@ -28,7 +28,8 @@ do
       local a = racket.pos
       local b = racket.pos + racket.size
 
-      local res = math.segment.containsPoint(a, b, laserHeadPosition) and racket or false
+      local res = math.segment.containsPoint(a, b, laserHeadPosition) and (
+        racket:canReflect() and racket or false)
       if res then return res end
     end
     return false
@@ -54,24 +55,14 @@ do
   end
 
   function LaserHead:draw()
-    love.graphics.translate(self.pos.x, self.pos.y)
-    love.graphics.rotate(self.angle)
-    love.graphics.ellipse('fill', 0, 0, self.size.x, self.size.y)
-    love.graphics.origin()
+    --love.graphics.translate(self.pos.x, self.pos.y)
+    --love.graphics.rotate(self.angle)
+    --love.graphics.ellipse('fill', 0, 0, self.size.x, self.size.y)
+    --love.graphics.origin()
   end
 
   function LaserHead:becomePassive()
-    self.entity.mode = Laser.static.mode.PASSIVE
-    print("Meow.")
-    local startTime = love.timer.getTime()
-    korutin.new(function()
-      print("INSIDE CORO")
-      while (love.timer.getTime() - startTime < LASER_PASSIVE_TIMEOUT) do
-        coroutine.yield()
-      end
-      print("Roar!")
-      self.entity.mode = Laser.static.mode.AGGRESIVE
-    end)
+    self.entity:becomePassive()
   end
 
   function LaserHead:reactToRacketCollision(racket)
