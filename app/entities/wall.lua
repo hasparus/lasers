@@ -28,13 +28,15 @@ function Wall:update(deltaTime)
   Entity.update(self)
 end
 
-function Wall:drawEdges()
-  love.graphics.setColor(colors.wallEdge:getColor())
+function Wall:drawEdges(color)
+  color = color or colors.wallEdge
+  love.graphics.setColor(color:getColor())
   love.graphics.rectangle('line', self.body.pos.x - 1, self.body.pos.y - 1, self.body.size.x + 1, self.body.size.y + 1)
 end
 
-function Wall:drawInside()
-  love.graphics.setColor(colors.wall:getColor())
+function Wall:drawInside(color)
+  color = color or colors.wallEdge
+  love.graphics.setColor(color:getColor())
   love.graphics.rectangle('fill', self.body:unpack())
 end
 

@@ -8,6 +8,7 @@ hc = require 'libs.HC'
 require 'managers.sounds'
 require 'colors'
 graphzy = require 'utils.graphzy'
+korutin = require 'managers.korutin'
 
 colors = colors or {}
 
@@ -18,11 +19,17 @@ window = {
 
 -- Game
 game = {
+  sounds = {
+    playMusic = function()
+      local music = love.audio.play('assets/loops/loop' .. love.math.random(3) .. '.wav', 'stream', true)
+      music:setVolume(0.3)
+    end
+  },
   load = function()
-
     shack:setDimensions(window.width, window.height)
-
     entities = AutoIndexedList.new()
+    game.entities = entities
+
     bax = Bayoo:new()
 
     pauseOverlay = PauseOverlay:new()
@@ -34,6 +41,9 @@ game = {
                   bax
                   )
 
+                  --TODO:
+    local netSize = 120
+    entities:push(Net:new(0, window.height / 2 - (netSize / 2), window.width, netSize))
     walls = nil
     local instantiateWalls = function() --instantiate walls 
       local p = 12
@@ -56,6 +66,7 @@ game = {
     entities:push(pauseOverlay,
                   PadDebug:new())
 
+    game.sounds.playMusic()
   end,
   update = function(deltaTime)
     love.audio.update()
@@ -77,6 +88,7 @@ game = {
     end
   end,
   paused = false,
+  rackets = {}
 }
 
 require 'managers.controls'
@@ -87,6 +99,7 @@ require 'entities.pad_debug_ui'
 require 'entities.bayoo'
 require 'entities.robot'
 require 'entities.wall'
+require 'entities.net'
 require 'entities.ui'
 
 require 'utils.utils'
@@ -102,6 +115,7 @@ end
 
 function love.update(deltaTime)
   graphzy.update(deltaTime)
+  korutin.update(deltaTime)
   lovebird.update()
 
   propagate(colors, 'update', deltaTime)
@@ -123,6 +137,10 @@ function love.keypressed(key)
 
   if key == 'u' then
     game.controls.pad[1].joystick = "DEEEBUUUG"
+  end
+
+  if key == 'r' then
+    love.event.quit('restart')
   end
 end
 

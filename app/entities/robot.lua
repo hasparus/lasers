@@ -27,8 +27,6 @@ function Robot:initialize(x, y, sx, sy, playerID)
   
   self.collider = hc.circle(x, y, sx)
   self.collider.entity = self
-
-  -- todo add racket, render racket, rotate racket
 end
 
 function Robot:update(deltaTime)
@@ -46,24 +44,36 @@ end
 
 function Robot:getHitByLaser()
   love.audio.play('assets/playerhit.wav', 'static')
+  love.audio.play('assets/playerdeath.wav', 'static')
   self:destroy()
 end
 
 function Robot:handleCollisions(deltaTime)
+  local skipMove = false
+
   for other, separating_vector in pairs(hc.collisions(self.collider)) do
     separating_vector = Vector2.new(separating_vector)
-    if other.entity.class.name == 'Racket' then
+    if other.entity then
+      if other.entity.class.name == 'Racket' then
       -- do nothing 
-    elseif other.entity and other.entity.move then
-      if other.entity.class.name == 'LaserHead' then
-        self:getHitByLaser()
-        -- gameState.end() -- timescale *= 0.5, po sekundzie pokaż wyniki itditp
-      end 
-
-      other.entity:move(-separating_vector / 2) -- *blinker* reversing vector to pass throught walls? 
-      self:move(separating_vector / 2)
-    else
-      self:move(separating_vector)
+      elseif other.entity and other.entity.move then
+        if other.entity.class.name == 'LaserHead' then
+          if other.entity.entity.mode == Laser.static.mode.AGGRESIVE then 
+            self:getHitByLaser()
+          end
+          skipMove = true -- gameState.end() -- timescale *= 0.5, po sekundzie pokaż wyniki itditp
+        else
+      
+          if not skipMove then
+            other.entity:move(-separating_vector / 2) -- *blinker* reversing vector to pass throught walls? 
+            self:move(separating_vector / 2)
+          end
+        end
+      else
+        if not skipMove then
+          self:move(separating_vector)
+        end
+      end
     end
   end
 end
@@ -77,4 +87,9 @@ function Robot:draw()
   love.graphics.withColor(colors['robotish' .. self.playerID],
     love.graphics.ellipse, 'fill', self.body:unpack())
   Entity.draw(self)
+end
+
+function Robot:destroy()
+  self.racket:destroy()
+  Entity.destroy(self)
 end
