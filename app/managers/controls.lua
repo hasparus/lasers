@@ -33,6 +33,8 @@ for i = 1, PLAYER_COUNT do
 end
 
 function love.gamepadpressed(joystick, button)
+  game.ready.onKeyPressed()
+
   local id = joystick:getID()
   game.controls.pad.connect(id)
   game.controls.pad.lastAction = 

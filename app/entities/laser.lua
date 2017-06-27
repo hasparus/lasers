@@ -32,20 +32,22 @@ do
   function segmentCollisions(a, b)
     local collisionPoints = {}
     for i, racket in ipairs(game.rackets) do
-      local c = racket.pos
-      local d = racket.pos + racket.size
-      
-      local cross = Vector2.new(math.linesCrossPoint(
-        math.lineFromPoints(a, b),
-        math.lineFromPoints(c, d)
-      ))
+      if racket:canReflect() then
+        local c = racket.pos
+        local d = racket.pos + racket.size
 
-      if math.segment.within(a.x, cross.x, b.x) and
-         math.segment.within(c.x, cross.x, d.x) then
-        collisionPoints[#collisionPoints + 1] = {
-          crossPoint = cross, 
-          racketVector = racket.size
-        }
+        local cross = Vector2.new(math.linesCrossPoint(
+          math.lineFromPoints(a, b),
+          math.lineFromPoints(c, d)
+        ))
+
+        if math.segment.within(a.x, cross.x, b.x) and
+           math.segment.within(c.x, cross.x, d.x) then
+          collisionPoints[#collisionPoints + 1] = {
+            crossPoint = cross, 
+            racketVector = racket.size
+          }
+        end
       end
     end
     return collisionPoints
@@ -113,6 +115,7 @@ do
         splitInfo.crossPoint
       )
 
+    laserReflected.lifespan = self.lifespan / 3
     laserReflected:becomePassive()
     laserReflected.head.velocity:trimInPlace(1.5 * self.head.velocity:len())
     self:becomePassive()
@@ -152,28 +155,33 @@ do
   end
   
   function Laser:draw()
-    love.graphics.setColor(colors.laser[self.mode]:getColor())
 
-    Entity.draw(self)
-  
-    self.tail:draw()
-    self.head:draw()
-  
-    local middlepoints = self.middlepoints    
-    local nodes = {self.tail.pos, unpack(middlepoints)}
-    nodes[#nodes + 1] = self.head.pos
-    local points = {}
-  
-    --print(#nodes)
+    local drawProper = function()
+      love.graphics.setColor(colors.laser[self.mode]:getColor())
+
+      Entity.draw(self)
     
-    for _, v in ipairs(nodes) do
-      points[#points + 1] = v.x
-      points[#points + 1] = v.y
-    end
+      self.tail:draw()
+      self.head:draw()
     
-    love.graphics.line(unpack(points))
-      --local node = middlepoints[#middlepoints]
-      --love.graphics.line(node.x, node.y, self.head.pos.x, self.head.pos.y)
+      local middlepoints = self.middlepoints    
+      local nodes = {self.tail.pos, unpack(middlepoints)}
+      nodes[#nodes + 1] = self.head.pos
+      local points = {}
+    
+      --print(#nodes)
+
+      for _, v in ipairs(nodes) do
+        points[#points + 1] = v.x
+        points[#points + 1] = v.y
+      end
+
+      love.graphics.line(unpack(points))
+        --local node = middlepoints[#middlepoints]
+        --love.graphics.line(node.x, node.y, self.head.pos.x, self.head.pos.y)
+    end 
+    
+    drawProper()
   end
 
 end

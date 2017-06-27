@@ -95,10 +95,18 @@ do
         --print(other.entity.class.name)
         local otherClass = other.entity.class.name
         
-        if otherClass == 'Robot' and aggresive then
-          print('destroyed robot!')
+        if aggresive then
+          if otherClass == 'Robot' then
+            print('destroyed robot!')
+          end
         
-        elseif otherClass == 'Wall' then
+          if otherClass == 'Crystal' then
+            other.entity:getHitByLaser()
+          end
+        end
+        
+
+        if otherClass == 'Wall' then
           
           wallCollisionSfx()
           self:move(separating_vector * 5)
