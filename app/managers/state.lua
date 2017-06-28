@@ -33,6 +33,7 @@ return (function()
       error('You can\'t win if game is not playing.')
     end
 
+    game.state.winnerId = winnerId
     game.finished.load()
   end
 

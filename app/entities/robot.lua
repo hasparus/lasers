@@ -45,6 +45,7 @@ end
 function Robot:getHitByLaser()
   love.audio.play('assets/playerhit.wav', 'static')
   love.audio.play('assets/playerdeath.wav', 'static')
+  game.state.onPlayerDeath(self.playerID)
   self:destroy()
 end
 

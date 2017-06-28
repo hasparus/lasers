@@ -20,6 +20,8 @@ window = {
   width = love.graphics.getWidth()
 }
 
+postprocesses = shine.filmgrain():chain(shine.glowsimple())
+
 -- Game
 game = {
   sounds = {
@@ -43,14 +45,16 @@ game = {
       game.ready.load()
     end,
     draw = function()
-      shine.filmgrain():chain(shine.glowsimple()):draw(function()
+      love.graphics.setColor(255, 255, 255) -- fix for unclean postprocessing
+      local winner = game.state.winnerId
+      postprocesses:draw(function()
         love.graphics.withColor(
-          COLORS.feel.black,
+          COLORS.feel.blueGray,
           function()
             love.graphics.rectangle('fill', 0, 0, window.width, window.height)
-            love.graphics.setColor(COLORS.feel.green:getColor())
+            love.graphics.setColor(colors['robotish' .. winner]:getColor())
             love.graphics.print([[
-              Player ]] .. 79 .. [[ won!
+              Player ]] .. winner .. [[ won!
                 R -- Restart
                 ESC -- Quit
             ]], 100, 200)
@@ -67,12 +71,12 @@ game = {
       love.graphics.setFont(game.ready.font)
     end,
     draw = function()
-      shine.filmgrain():chain(shine.glowsimple()):draw(function()
+      postprocesses:draw(function()
         love.graphics.withColor(
           COLORS.feel.blueGray,
           function()
             love.graphics.rectangle('fill', 0, 0, window.width, window.height)
-            love.graphics.setColor(COLORS.feel.green:getColor())
+            love.graphics.setColor(COLORS.feel.orange:getColor())
             love.graphics.print([[
               Controls:
                 Left Stick -- Move
@@ -148,7 +152,7 @@ game = {
       entities:push(unpack(spawnCrystals(3, robots[1], 100, 100)))
       entities:push(unpack(spawnCrystals(3, robots[2], 100, -100)))
 
-      entities:push(PadDebug:new())
+      --entities:push(PadDebug:new())
     end,
     update = function(deltaTime)
       for i = 1, entities.count do

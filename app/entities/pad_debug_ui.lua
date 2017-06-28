@@ -19,10 +19,10 @@ function PadDebug:update()
   Entity.update(self)
 end
 
-function PadDebug:draw()
+function PadDebug:draw() 
   Entity.draw(self)
 
-  love.graphics.setColor(255, 255, 0)
+  love.graphics.setColor(255, 255, 255)
 
   local pad = game.controls.pad.lastAction.pad
   love.graphics.print(
